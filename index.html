@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DragonGate Games</title>
+<meta name="description" content="DragonGate is a game studio — currently shipping Cat Museum on Google Play — that also builds Unity Editor tooling for other developers.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%23101825'/%3E%3Crect x='4' y='4' width='6' height='6' fill='%23E7A33E'/%3E%3Crect x='14' y='4' width='6' height='6' fill='%2326334A'/%3E%3Crect x='4' y='14' width='6' height='6' fill='%2326334A'/%3E%3Crect x='14' y='14' width='6' height='6' fill='%234FC3B8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#101825;
+    --panel:#17202e;
+    --line:#26334a;
+    --text:#edeff3;
+    --text-dim:#93a0b4;
+    --amber:#e7a33e;
+    --teal:#4fc3b8;
+    --max-w:1120px;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text);
+    font-family:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1, h2, h3{
+    font-family:'Space Grotesk', 'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    line-height:1.15;
+    margin:0;
+  }
+
+  code, .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  a{ color:var(--teal); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:3px;
+  }
+
+  .wrap{ max-width:var(--max-w); margin:0 auto; padding:0 28px; }
+
+  /* ---------- Nav ---------- */
+  header{
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    background:rgba(16,24,37,0.92);
+    backdrop-filter:blur(6px);
+    z-index:10;
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 0;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:1.05rem;
+    color:var(--text);
+  }
+  .brand svg{ display:block; }
+  .navlinks{ display:flex; gap:28px; font-size:0.95rem; }
+  .navlinks a{ color:var(--text-dim); }
+  .navlinks a:hover{ color:var(--text); text-decoration:none; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:88px 0 96px;
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:40px;
+    align-items:center;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    color:var(--amber);
+    margin-bottom:14px;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 4vw, 3.1rem);
+    max-width:12ch;
+  }
+  .hero p{
+    color:var(--text-dim);
+    font-size:1.05rem;
+    max-width:46ch;
+    margin:22px 0 32px;
+  }
+  .cta-row{ display:flex; gap:16px; flex-wrap:wrap; }
+  .btn{
+    display:inline-block;
+    padding:12px 22px;
+    border-radius:2px;
+    font-size:0.95rem;
+    font-weight:500;
+    border:1px solid transparent;
+  }
+  .btn-primary{ background:var(--amber); color:#1a1206; }
+  .btn-primary:hover{ background:#f0b158; text-decoration:none; }
+  .btn-ghost{ border-color:var(--line); color:var(--text); }
+  .btn-ghost:hover{ border-color:var(--teal); color:var(--teal); text-decoration:none; }
+
+  /* Hero vitrine grid — nods to Cat Museum's mine-and-display loop */
+  .hero-cases{ width:100%; height:auto; }
+  .hero-cases rect.case{
+    fill:var(--panel);
+    stroke:var(--line);
+    stroke-width:1.4;
+  }
+  .hero-cases rect.item{
+    opacity:0;
+    animation:fill-in 0.5s ease-out forwards;
+  }
+  @keyframes fill-in{
+    from{ opacity:0; transform:scale(0.4); transform-origin:center; }
+    to{ opacity:1; transform:scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-cases rect.item{ animation:none; opacity:1; }
+  }
+
+  /* ---------- Section shared ---------- */
+  section{ padding:64px 0; }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom:1px solid var(--line);
+    padding-bottom:18px;
+    margin-bottom:36px;
+  }
+  .section-head h2{ font-size:1.5rem; }
+  .section-head .count{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--text-dim);
+    font-size:0.85rem;
+  }
+  .section-note{
+    color:var(--text-dim);
+    font-size:0.95rem;
+    max-width:64ch;
+    margin:-16px 0 32px;
+  }
+
+  /* ---------- Games ---------- */
+  .game-card{
+    display:grid;
+    grid-template-columns:200px 1fr;
+    gap:28px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    padding:28px;
+    align-items:center;
+  }
+  .game-icon{
+    width:100%;
+    aspect-ratio:1;
+    border:1px solid var(--line);
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    grid-template-rows:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+  }
+  .game-icon div{ background:var(--ink); }
+  .game-icon div:nth-child(2){ background:var(--amber); }
+  .game-icon div:nth-child(6){ background:var(--teal); }
+  .game-icon div:nth-child(8){ background:var(--amber); }
+  .game-title-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .game-title-row h3{ font-size:1.3rem; }
+  .status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--teal);
+    border:1px solid var(--teal);
+    padding:3px 8px;
+    border-radius:2px;
+  }
+  .game-card p{ color:var(--text-dim); margin:0 0 16px; max-width:56ch; }
+  .tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--text-dim);
+    border:1px solid var(--line);
+    padding:3px 8px;
+    border-radius:2px;
+  }
+
+  /* ---------- Assets grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .card{
+    background:var(--panel);
+    padding:26px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .card .index{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:var(--amber);
+  }
+  .card h3{ font-size:1.15rem; }
+  .card p{ color:var(--text-dim); font-size:0.92rem; margin:0; flex-grow:1; }
+  .card .tags{ margin-bottom:0; margin-top:6px; }
+
+  /* ---------- About ---------- */
+  .about{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:48px;
+    align-items:start;
+  }
+  .about .stat-block{ border-left:2px solid var(--amber); padding-left:20px; }
+  .about .stat-block + .stat-block{ margin-top:28px; }
+  .about .stat-block .stat{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:1.5rem;
+    color:var(--text);
+  }
+  .about .stat-block .stat-label{ color:var(--text-dim); font-size:0.9rem; }
+  .about-copy p{ color:var(--text-dim); margin:0 0 18px; }
+  .about-copy p:last-child{ margin-bottom:0; }
+  .about-copy strong{ color:var(--text); font-weight:500; }
+
+  /* ---------- Footer ---------- */
+  footer{ border-top:1px solid var(--line); padding:36px 0; }
+  .foot-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .foot-row .left{ color:var(--text-dim); font-size:0.88rem; }
+  .foot-row .left a{ color:var(--text-dim); }
+  .foot-row .left a:hover{ color:var(--teal); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px){
+    .hero{ grid-template-columns:1fr; padding-top:56px; }
+    .hero-cases{ max-width:320px; }
+    .grid{ grid-template-columns:repeat(2, 1fr); }
+    .about{ grid-template-columns:1fr; }
+    .game-card{ grid-template-columns:1fr; }
+    .game-icon{ max-width:160px; }
+  }
+  @media (max-width: 560px){
+    .navlinks{ gap:18px; font-size:0.88rem; }
+    .grid{ grid-template-columns:1fr; }
+    .hero p{ font-size:1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="8" height="8" fill="var(--amber)"/>
+        <rect x="13" y="3" width="8" height="8" fill="var(--line)"/>
+        <rect x="3" y="13" width="8" height="8" fill="var(--line)"/>
+        <rect x="13" y="13" width="8" height="8" fill="var(--teal)"/>
+      </svg>
+      DragonGate
+    </div>
+    <nav class="navlinks">
+      <a href="#games">Games</a>
+      <a href="#assets">Assets</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap" style="display:contents;">
+      <div>
+        <div class="eyebrow">game studio</div>
+        <h1>We make games, and the tools that make them faster to finish.</h1>
+        <p>DragonGate is a small game studio. Along the way we've also built Unity Editor tooling that other developers use.</p>
+      </div>
+      <svg class="hero-cases" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g>
+          <rect class="case" x="10"  y="10"  width="66" height="66"/>
+          <rect class="case" x="86"  y="10"  width="66" height="66"/>
+          <rect class="case" x="162" y="10"  width="66" height="66"/>
+          <rect class="case" x="238" y="10"  width="66" height="66"/>
+
+          <rect class="case" x="10"  y="86"  width="66" height="66"/>
+          <rect class="case" x="86"  y="86"  width="66" height="66"/>
+          <rect class="case" x="162" y="86"  width="66" height="66"/>
+          <rect class="case" x="238" y="86"  width="66" height="66"/>
+
+          <rect class="case" x="10"  y="162" width="66" height="66"/>
+          <rect class="case" x="86"  y="162" width="66" height="66"/>
+          <rect class="case" x="162" y="162" width="66" height="66"/>
+          <rect class="case" x="238" y="162" width="66" height="66"/>
+
+          <rect class="case" x="10"  y="238" width="66" height="66"/>
+          <rect class="case" x="86"  y="238" width="66" height="66"/>
+          <rect class="case" x="162" y="238" width="66" height="66"/>
+          <rect class="case" x="238" y="238" width="66" height="66"/>
+        </g>
+        <g>
+          <rect class="item" x="24"  y="24"  width="38" height="38" fill="var(--amber)" style="animation-delay:0.05s"/>
+          <rect class="item" x="176" y="24"  width="38" height="38" fill="var(--teal)"  style="animation-delay:0.35s"/>
+          <rect class="item" x="100" y="100" width="38" height="38" fill="var(--teal)"  style="animation-delay:0.2s"/>
+          <rect class="item" x="252" y="176" width="38" height="38" fill="var(--amber)" style="animation-delay:0.5s"/>
+          <rect class="item" x="24"  y="252" width="38" height="38" fill="var(--teal)"  style="animation-delay:0.65s"/>
+          <rect class="item" x="176" y="252" width="38" height="38" fill="var(--amber)" style="animation-delay:0.8s"/>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <section id="games">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Games</h2>
+        <span class="count">01 released</span>
+      </div>
+
+      <div class="game-card">
+        <div class="game-icon">
+          <div></div><div></div><div></div>
+          <div></div><div></div><div></div>
+          <div></div><div></div><div></div>
+        </div>
+        <div>
+          <div class="game-title-row">
+            <h3>Cat Museum</h3>
+            <span class="status">Live on Google Play</span>
+          </div>
+          <div class="tags"><span class="tag">adventure</span><span class="tag">mobile</span></div>
+          <p>Cats mine for relics and put them on display, one exhibit at a time — an adventure game about building a museum out of what you dig up.</p>
+          <a class="btn btn-ghost" href="https://play.google.com/store/apps/details?id=com.dragongate.museum">Get it on Google Play</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="assets">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Assets</h2>
+        <span class="count">06 tools</span>
+      </div>
+      <p class="section-note">Alongside its games, DragonGate builds Unity Editor tooling — grown out of problems we ran into making our own games, then cleaned up for other developers.</p>
+      <div class="grid">
+
+        <div class="card">
+          <span class="index">01</span>
+          <h3>TweenStudio</h3>
+          <p>A designer-friendly tweening system with a four-mode From/To workflow and a visual sequence editor. Preview animations directly in the Editor, no Play mode required.</p>
+          <div class="tags"><span class="tag">animation</span><span class="tag">editor tooling</span></div>
+        </div>
+
+        <div class="card">
+          <span class="index">02</span>
+          <h3>AssemblyForge</h3>
+          <p>Visualize and manage .asmdef dependencies through a custom graph renderer, with Tarjan's SCC cycle detection and a separation advisor to catch tangled references before they compile.</p>
+          <div class="tags"><span class="tag">asmdef</span><span class="tag">compile time</span></div>
+        </div>
+
+        <div class="card">
+          <span class="index">03</span>
+          <h3>BuildForge</h3>
+          <p>Manage build profiles across platforms — define symbols, batch builds, and platform targets — with CI/CD integration through Unity's -executeMethod.</p>
+          <div class="tags"><span class="tag">build pipeline</span><span class="tag">CI/CD</span></div>
+        </div>
+
+        <div class="card">
+          <span class="index">04</span>
+          <h3>Debug Monitor Pro</h3>
+          <p>A runtime UGUI debug monitor showing performance metrics and live logs on-device, with auto-initialization and email reporting for issues caught outside the Editor.</p>
+          <div class="tags"><span class="tag">runtime</span><span class="tag">profiling</span></div>
+        </div>
+
+        <div class="card">
+          <span class="index">05</span>
+          <h3>Pool Scope</h3>
+          <p>Object pooling built around a PoolHandle&lt;T&gt; pattern, with three loader strategies, an IMGUI runtime monitor, and support for both the old and new Input Systems.</p>
+          <div class="tags"><span class="tag">performance</span><span class="tag">pooling</span></div>
+        </div>
+
+        <div class="card">
+          <span class="index">06</span>
+          <h3>Prefs Visual Manager</h3>
+          <p>Browse and edit PlayerPrefs and EditorPrefs inline, with search, filtering, and JSON export/import — instead of digging through the registry or a plist.</p>
+          <div class="tags"><span class="tag">prefs</span><span class="tag">editor tooling</span></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>About DragonGate</h2>
+      </div>
+      <div class="about">
+        <div>
+          <div class="stat-block">
+            <div class="stat">1 game</div>
+            <div class="stat-label">live on Google Play</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat">6 tools</div>
+            <div class="stat-label">published and in review</div>
+          </div>
+        </div>
+        <div class="about-copy">
+          <p>DragonGate is a game studio first. <strong>Cat Museum</strong> is the first title, and the tools came second — built to solve problems that showed up while making it, then polished into their own Unity Editor assets.</p>
+          <p>Every tool follows the same instinct as the games: make something small feel finished. Surface what's normally hidden — dependency graphs, pool internals, prefs storage, build state — and cut out the repetitive parts of the workflow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap foot-row">
+    <div class="left">
+      <div class="mono">© <span id="year"></span> DragonGate</div>
+    </div>
+    <div class="left">
+      <a href="mailto:dragongate.contact@gmail.com">dragongate.contact@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
